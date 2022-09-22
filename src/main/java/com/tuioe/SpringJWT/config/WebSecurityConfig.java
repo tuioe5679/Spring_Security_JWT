@@ -12,12 +12,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-@Component
 public class WebSecurityConfig {
 
     private final TokenProvider tokenProvider;
@@ -51,5 +49,4 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-
 }
