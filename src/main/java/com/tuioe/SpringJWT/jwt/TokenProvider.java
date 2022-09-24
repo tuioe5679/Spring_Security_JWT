@@ -24,7 +24,7 @@ public class TokenProvider {
 
     // 토큰 생성후 검증값
     private static final String AUTHORITIES_KEY = "auth";
-    private static final String BEARER_TYPE = "bearer";
+    private static final String TOKEN_TYPE = "rosed";
 
     // 토큰 만료 시간 30분
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;
@@ -52,15 +52,17 @@ public class TokenProvider {
 
         // Jwts 토큰 생성
         String token = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY,authorities)
-                .setExpiration(tokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .setSubject(authentication.getName())// 토큰 제목
+                .claim(AUTHORITIES_KEY,authorities)// Claims 설정
+                .setExpiration(tokenExpiresIn)// 토큰 만료 시간
+                .signWith(key, SignatureAlgorithm.HS512)// key,HS512 Sign
                 .compact();
+
+        System.out.println(token);
 
         // TokenDto는 토큰 검증값,토큰,만료 시간을 포함
         return TokenDto.builder()
-                .grantType(BEARER_TYPE)
+                .grantType(TOKEN_TYPE)
                 .accessToken(token)
                 .tokenExpiresIn(tokenExpiresIn.getTime())
                 .build();
