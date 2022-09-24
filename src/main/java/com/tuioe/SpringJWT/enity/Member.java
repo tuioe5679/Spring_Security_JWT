@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
-@Entity
-@Getter
-@NoArgsConstructor
+@Entity // Entity 클래스 지정(DB와 매핑)
+@Getter // Get 메소드 생성
+@NoArgsConstructor // 기본 생성자
 public class Member {
 
-    @Id
+    @Id // PK (기본키)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

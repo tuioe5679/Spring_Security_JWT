@@ -2,7 +2,6 @@ package com.tuioe.SpringJWT.jwt;
 
 import com.tuioe.SpringJWT.dto.TokenDto;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,12 +32,12 @@ public class TokenProvider {
 
     // secret key 값을 받고 decode 이후 key값으로 정함
     public TokenProvider(@Value("${jwt.secret}") String secretKey){
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = secretKey.getBytes();
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     // 토큰을 생성하는 메소드
-    public TokenDto generateTokenDto(Authentication authentication){
+    public TokenDto tokenCreate(Authentication authentication){
 
         // Authentication 값을 String 으로 변환
         String authorities = authentication.getAuthorities().stream()
@@ -46,13 +45,13 @@ public class TokenProvider {
                 .collect(Collectors.joining(","));
 
         // 현재 시간
-        long now = (new Date()).getTime();
+        long nowTime = (new Date()).getTime();
 
         // 만료 시간
-        Date tokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        Date tokenExpiresIn = new Date(nowTime + ACCESS_TOKEN_EXPIRE_TIME);
 
         // Jwts 토큰 생성
-        String accessToken = Jwts.builder()
+        String token = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY,authorities)
                 .setExpiration(tokenExpiresIn)
@@ -62,7 +61,7 @@ public class TokenProvider {
         // TokenDto는 토큰 검증값,토큰,만료 시간을 포함
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
-                .accessToken(accessToken)
+                .accessToken(token)
                 .tokenExpiresIn(tokenExpiresIn.getTime())
                 .build();
     }
@@ -71,7 +70,7 @@ public class TokenProvider {
     public Authentication getAuthentication(String accessToken){
 
         // String 토큰을 Claims 형태로 생성
-        Claims claims = pareseClaims(accessToken);
+        Claims claims = parseToken(accessToken);
 
         if(claims.get(AUTHORITIES_KEY) == null){
             throw new RuntimeException("권한 정보가 없는 토큰입니다");
@@ -109,7 +108,7 @@ public class TokenProvider {
     }
 
     //토큰을 claims 형태로 생성하는 메소드 (권한 정보 확인 가능)
-    private Claims pareseClaims(String accessToken){
+    private Claims parseToken(String accessToken){
         try{
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         }catch (ExpiredJwtException e){
