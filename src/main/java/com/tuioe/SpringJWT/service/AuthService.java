@@ -1,7 +1,7 @@
 package com.tuioe.SpringJWT.service;
 
 import com.tuioe.SpringJWT.dto.MemberRequestDto;
-import com.tuioe.SpringJWT.dto.MemberResponsDto;
+import com.tuioe.SpringJWT.dto.MemberResponseDto;
 import com.tuioe.SpringJWT.dto.TokenDto;
 import com.tuioe.SpringJWT.enity.Member;
 import com.tuioe.SpringJWT.jwt.TokenProvider;
@@ -24,13 +24,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
-    public MemberResponsDto signup(MemberRequestDto requestDto){
+    public MemberResponseDto signup(MemberRequestDto requestDto){
         if(memberRepositroy.existsByEmail(requestDto.getEmail())){
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
 
         Member member = requestDto.createMember(passwordEncoder);
-        return MemberResponsDto.of(memberRepositroy.save(member));
+        return MemberResponseDto.of(memberRepositroy.save(member));
     }
 
     public TokenDto login(MemberRequestDto memberRequestDto){

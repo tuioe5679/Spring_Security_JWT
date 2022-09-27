@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MemberResponsDto {
+public class MemberResponseDto {
     private String email;
     private String nickname;
 
-    public static MemberResponsDto of(Member member){
-        return MemberResponsDto.builder()
+    public static MemberResponseDto of(Member member){
+        return MemberResponseDto.builder()
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .build();
